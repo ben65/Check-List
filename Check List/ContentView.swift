@@ -22,32 +22,32 @@ struct ContentView: View {
     
     var body: some View {
         NavigationSplitView {
+            
             List {
                 ForEach(items) { item in
                     if (!item.checked) {
                         Label(item.item, systemImage: "bird")
                             .onTapGesture {
-                                print ("Check \(item.item)")
                                 item.checked = true
                             }
                     }
                 }
                 .onDelete(perform: deleteItems)
             }
-            Text("Checked Items")
+            
             List {
                 ForEach(items) { item in
                     if (item.checked) {
                         Label(item.item, systemImage: "flag.pattern.checkered")
                             .strikethrough(true)
                             .onTapGesture {
-                                print ("Uncheck /(item.item)")
                                 item.checked = false
                             }
                     }
                 }
                 .onDelete(perform: deleteItems)
             }
+            
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     TextField("New Item", text: $newItem)
