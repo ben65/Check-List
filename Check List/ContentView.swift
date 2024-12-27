@@ -12,19 +12,36 @@ struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var items: [Item]
 
+    @State private var newItem = ""
+    
+    enum FocusField: Hashable {
+      case field
+    }
+        
+    @FocusState private var focusedField: FocusField?
+    
     var body: some View {
         NavigationSplitView {
             List {
                 ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
-                    } label: {
-                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
-                    }
+                    Label(item.item, systemImage: "bird")
+                        .onTapGesture {
+                            print ("Tap /(item.item")
+                        }
                 }
                 .onDelete(perform: deleteItems)
             }
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    TextField("New Item", text: $newItem)
+                        .focused($focusedField, equals: .field)
+                                  .onAppear {
+                                    self.focusedField = .field
+                                  }
+                                  .onSubmit {
+                                      self.focusedField = .field
+                                  }
+                }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     EditButton()
                 }
@@ -34,6 +51,7 @@ struct ContentView: View {
                     }
                 }
             }
+            .onSubmit(addItem)
         } detail: {
             Text("Select an item")
         }
@@ -41,8 +59,9 @@ struct ContentView: View {
 
     private func addItem() {
         withAnimation {
-            let newItem = Item(timestamp: Date())
-            modelContext.insert(newItem)
+            modelContext.insert(Item(item: newItem))
+            newItem = ""
+            
         }
     }
 
