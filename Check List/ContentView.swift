@@ -24,10 +24,25 @@ struct ContentView: View {
         NavigationSplitView {
             List {
                 ForEach(items) { item in
-                    Label(item.item, systemImage: "bird")
-                        .onTapGesture {
-                            print ("Tap /(item.item")
-                        }
+                    if (!item.checked) {
+                        Label(item.item, systemImage: "bird")
+                            .onTapGesture {
+                                print ("Check \(item.item)")
+                                item.checked = true
+                            }
+                    }
+                }
+                .onDelete(perform: deleteItems)
+            }
+            List {
+                ForEach(items) { item in
+                    if (item.checked) {
+                        Label(item.item, systemImage: "flag.pattern.checkered")
+                            .onTapGesture {
+                                print ("Uncheck /(item.item)")
+                                item.checked = false
+                            }
+                    }
                 }
                 .onDelete(perform: deleteItems)
             }

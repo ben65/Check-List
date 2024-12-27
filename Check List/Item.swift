@@ -11,8 +11,10 @@ import SwiftData
 @Model
 final class Item {
     var item: String
+    var checked: Bool
     
     init(item: String) {
         self.item = item
+        self.checked = false
     }
 }
