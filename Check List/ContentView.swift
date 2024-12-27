@@ -34,10 +34,12 @@ struct ContentView: View {
                 }
                 .onDelete(perform: deleteItems)
             }
+            Text("Checked Items")
             List {
                 ForEach(items) { item in
                     if (item.checked) {
                         Label(item.item, systemImage: "flag.pattern.checkered")
+                            .strikethrough(true)
                             .onTapGesture {
                                 print ("Uncheck /(item.item)")
                                 item.checked = false
