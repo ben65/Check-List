@@ -17,6 +17,9 @@ struct ContentView: View {
     enum FocusField: Hashable {
       case field
     }
+    
+    let uncheckedFilter = {(item:Item) -> Bool in !item.checked}
+    let checkedFilter = {(item:Item) -> Bool in item.checked}
         
     @FocusState private var focusedField: FocusField?
     
@@ -24,30 +27,26 @@ struct ContentView: View {
         NavigationSplitView {
             
             List {
-                ForEach(items) { item in
-                    if (!item.checked) {
+                Section(header: Text("List Items")) {
+                    ForEach(filteredItems(filter: uncheckedFilter)) { item in
                         Label(item.item, systemImage: "bird")
                             .onTapGesture {
                                 item.checked = true
                             }
                     }
+                    .onDelete(perform: deleteItems)
                 }
-                .onDelete(perform: deleteItems)
-            }
-            
-            List {
-                ForEach(items) { item in
-                    if (item.checked) {
+                Section(header: Text("Checked Items")) {
+                    ForEach(filteredItems(filter: checkedFilter)) { item in
                         Label(item.item, systemImage: "flag.pattern.checkered")
                             .strikethrough(true)
                             .onTapGesture {
                                 item.checked = false
                             }
                     }
+                    .onDelete(perform: deleteItems)
                 }
-                .onDelete(perform: deleteItems)
             }
-            
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     TextField("New Item", text: $newItem)
@@ -88,6 +87,16 @@ struct ContentView: View {
                 modelContext.delete(items[index])
             }
         }
+    }
+    
+    private func filteredItems(filter: (Item) -> Bool) -> [Item] {
+        var filteredItems: [Item] = []
+        for item in items {
+            if (filter(item)) {
+                filteredItems.append(item)
+            }
+        }
+        return filteredItems
     }
 }
 
